@@ -29,6 +29,7 @@ lazy val commonSettings = Seq(
 
 lazy val root = (project in file("."))
   .aggregate(`akka-http-thrift`, `akka-http-thrift-scrooge`)
+  .settings(commonSettings: _*)
   .settings(
     publish / skip := true
   )
