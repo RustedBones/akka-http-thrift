@@ -11,7 +11,7 @@ akka-http protobuf and json marshalling/unmarshalling for ScalaPB messages
 
 | Version | Release date | Akka Http version | Thrift version | Scrooge version | Scala versions      |
 | ------- | ------------ | ----------------- | -------------- |---------------- | ------------------- |
-| `0.1.0` | 2019-01-31   | `10.1.7`          | `0.11.0`       | ``              | `2.11.12`, `2.12.8` |
+| `0.1.0` | 2019-01-31   | `10.1.7`          | `0.11.0`       | `19.1.0`        | `2.11.12`, `2.12.8` |
 
 The complete list can be found in the [CHANGELOG](CHANGELOG.md) file.
 
