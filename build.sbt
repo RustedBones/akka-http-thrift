@@ -6,7 +6,7 @@ lazy val commonSettings = Seq(
   organization := "fr.davit",
   version := "0.1.1-SNAPSHOT",
   crossScalaVersions := Seq("2.11.12", "2.12.8"),
-  scalaVersion := (ThisBuild / crossScalaVersions).value.last,
+  scalaVersion := crossScalaVersions.value.last,
   Compile / compile / scalacOptions ++= Settings.scalacOptions(scalaVersion.value),
   homepage := Some(url(s"https://github.com/$username/$repo")),
   licenses += "APACHE" -> url(s"https://github.com/$username/$repo/blob/master/LICENSE"),
@@ -27,16 +27,9 @@ lazy val commonSettings = Seq(
   } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq,
 )
 
-lazy val root = (project in file("."))
-  .aggregate(`akka-http-thrift`, `akka-http-thrift-scrooge`)
-  .settings(commonSettings: _*)
-  .settings(
-    publish / skip := true
-  )
-
-lazy val `akka-http-thrift` = (project in file("akka-http-thrift"))
-  .settings(commonSettings: _*)
+lazy val `akka-http-thrift` = (project in file("."))
   .disablePlugins(ScroogeSBT)
+  .settings(commonSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
       Dependencies.akkaHttp,
@@ -49,7 +42,7 @@ lazy val `akka-http-thrift` = (project in file("akka-http-thrift"))
     )
   )
 
-lazy val `akka-http-thrift-scrooge` = (project in file("akka-http-thrift-scrooge"))
+lazy val `akka-http-thrift-scrooge` = (project in file("scrooge"))
   .dependsOn(`akka-http-thrift`)
   .settings(commonSettings: _*)
   .settings(
