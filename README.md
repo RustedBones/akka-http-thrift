@@ -12,6 +12,7 @@ akka-http protobuf and json marshalling/unmarshalling for ScalaPB messages
 
 | Version | Release date | Akka Http version | Thrift version | Scrooge version | Scala versions      |
 | ------- | ------------ | ----------------- | -------------- |---------------- | ------------------- |
+| `0.2.0` | 2019-07-13   | `10.1.8`          | `0.11.0`       | `19.1.0`        | `2.11.12`, `2.12.8` |
 | `0.1.0` | 2019-01-31   | `10.1.7`          | `0.11.0`       | `19.1.0`        | `2.11.12`, `2.12.8` |
 
 The complete list can be found in the [CHANGELOG](CHANGELOG.md) file.
@@ -53,17 +54,13 @@ struct Order {
 }
 ```
 
-Unmarshalling of the generated classes depends on the `Content-Type` header sent by the client:
+Marshalling/Unmarshalling of the generated classes depends on the `Accept`/`Content-Type` header sent by the client:
+- `Content-Type: application/json`: json
+- `Content-Type: application/vnd.apache.thrift.json`: json
 - `Content-Type: application/vnd.apache.thrift.binary`: binary
 - `Content-Type: application/vnd.apache.thrift.compact`: compact
-- `Content-Type: application/vnd.apache.thrift.json`: json
 
-
-Marshalling of your generated classes depends on the the `Accept` header sent by the client:
-- `Accept: application/vnd.apache.thrift.binary`: binary marshalling
-- `Accept: application/vnd.apache.thrift.compact`: compact marshalling
-- `Accept: application/vnd.apache.thrift.json`: json marshalling
-- no `Accept` header or matching both (eg `Accept: application/*`): json marshalling (json is chosen as default marshaller for its broader adoption and human readability purpose)
+-No `Accept` header or matching several (eg `Accept: application/*`) will take the 1st matching type from the above list.
 
 ### Thrift
 
