@@ -12,15 +12,21 @@ import scala.reflect.ClassTag
 
 trait ThriftAbstractSupport {
 
-  def protocolFactory: TProtocolFactory
+  protected def protocolFactory: TProtocolFactory
 
-  def contentType: ContentType
+  private def serialize[T <: TBase[_, _]](thrift: T): ByteString = {
+    val builder = ByteString.newBuilder
+    thrift.write(protocolFactory.getProtocol(new TIOStreamTransport(builder.asOutputStream)))
+    builder.result()
+  }
+
+  def contentTypes: Seq[ContentType]
 
   //--------------------------------------------------------------------------------------------------------------------
   // Unmarshallers
   //--------------------------------------------------------------------------------------------------------------------
   implicit def thriftUnmarshaller[T <: TBase[_, _] : ClassTag]: FromEntityUnmarshaller[T] = {
-    Unmarshaller.byteStringUnmarshaller.forContentTypes(contentType).map { data =>
+    Unmarshaller.byteStringUnmarshaller.forContentTypes(contentTypes.map(ContentTypeRange.apply): _*).map { data =>
       // this is not so nice but as long as thrift as default constructor we should be fine
       val message = implicitly[ClassTag[T]].runtimeClass.newInstance().asInstanceOf[T]
       message.read(protocolFactory.getProtocol(new TByteBuffer(data.asByteBuffer)))
@@ -32,11 +38,7 @@ trait ThriftAbstractSupport {
   // Marshallers
   //--------------------------------------------------------------------------------------------------------------------
   implicit def thriftMarshaller[T <: TBase[_, _]]: ToEntityMarshaller[T] = {
-    Marshaller.ByteStringMarshaller.wrap[T, MessageEntity](contentType.mediaType) { thrift =>
-      val builder = ByteString.newBuilder
-      thrift.write(protocolFactory.getProtocol(new TIOStreamTransport(builder.asOutputStream)))
-      builder.result()
-    }
+    Marshaller.oneOf(contentTypes.map(ct => Marshaller.ByteStringMarshaller.wrap(ct.mediaType)(serialize)): _*)
   }
 }
 
@@ -45,9 +47,11 @@ trait ThriftAbstractSupport {
 // Binary
 //----------------------------------------------------------------------------------------------------------------------
 trait ThriftBinarySupport extends ThriftAbstractSupport {
-  override def protocolFactory: TProtocolFactory = new TBinaryProtocol.Factory()
+  override protected val protocolFactory: TProtocolFactory = new TBinaryProtocol.Factory()
 
-  override def contentType: ContentType = MediaType.applicationBinary("vnd.apache.thrift.binary", MediaType.NotCompressible)
+  override val contentTypes: Seq[ContentType] = List(
+    MediaType.applicationBinary("vnd.apache.thrift.binary", MediaType.NotCompressible)
+  )
 }
 
 object ThriftBinarySupport extends ThriftBinarySupport
@@ -56,9 +60,11 @@ object ThriftBinarySupport extends ThriftBinarySupport
 // Compact
 //----------------------------------------------------------------------------------------------------------------------
 trait ThriftCompactSupport extends ThriftAbstractSupport {
-  override def protocolFactory: TProtocolFactory = new TCompactProtocol.Factory()
+  override protected val protocolFactory: TProtocolFactory = new TCompactProtocol.Factory()
 
-  override def contentType: ContentType = MediaType.applicationBinary("vnd.apache.thrift.compact", MediaType.NotCompressible)
+  override val contentTypes: Seq[ContentType] = List(
+    MediaType.applicationBinary("vnd.apache.thrift.compact", MediaType.NotCompressible)
+  )
 }
 
 object ThriftCompactSupport extends ThriftCompactSupport
@@ -67,9 +73,12 @@ object ThriftCompactSupport extends ThriftCompactSupport
 // JSON
 //----------------------------------------------------------------------------------------------------------------------
 trait ThriftJsonSupport extends ThriftAbstractSupport {
-  override def protocolFactory: TProtocolFactory = new TJSONProtocol.Factory()
+  override protected val protocolFactory: TProtocolFactory = new TJSONProtocol.Factory()
 
-  override def contentType: ContentType = MediaType.applicationBinary("vnd.apache.thrift.json", MediaType.NotCompressible)
+  override val contentTypes: Seq[ContentType] = List(
+    ContentTypes.`application/json`,
+    MediaType.applicationWithFixedCharset("vnd.apache.thrift.json", HttpCharsets.`UTF-8`)
+  )
 }
 
 object ThriftJsonSupport extends ThriftJsonSupport
@@ -77,21 +86,25 @@ object ThriftJsonSupport extends ThriftJsonSupport
 //----------------------------------------------------------------------------------------------------------------------
 // Generic
 //----------------------------------------------------------------------------------------------------------------------
-trait ThriftSupport {
+trait ThriftSupport extends ThriftAbstractSupport {
 
-  private[thrift] val thriftSupports = Seq(ThriftJsonSupport, ThriftBinarySupport, ThriftCompactSupport)
+  override protected def protocolFactory: TProtocolFactory = throw new Exception("No protocol factory defined for ThriftSupport")
+
+  private val thriftSupports = Seq(ThriftJsonSupport, ThriftBinarySupport, ThriftCompactSupport)
+
+  override val contentTypes: Seq[ContentType] = thriftSupports.flatMap(_.contentTypes)
 
   //--------------------------------------------------------------------------------------------------------------------
   // Unmarshallers
   //--------------------------------------------------------------------------------------------------------------------
-  implicit def thriftUnmarshaller[T <: TBase[_, _] : ClassTag]: FromEntityUnmarshaller[T] = {
+  implicit override def thriftUnmarshaller[T <: TBase[_, _] : ClassTag]: FromEntityUnmarshaller[T] = {
     Unmarshaller.firstOf(thriftSupports.map(_.thriftUnmarshaller[T]): _*)
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   // Marshallers
   //--------------------------------------------------------------------------------------------------------------------
-  implicit def scalaPbMarshaller[T <: TBase[_, _] : ClassTag]: ToEntityMarshaller[T] = {
+  implicit override def thriftMarshaller[T <: TBase[_, _]]: ToEntityMarshaller[T] = {
     Marshaller.oneOf(thriftSupports.map(_.thriftMarshaller[T]): _*)
   }
 }

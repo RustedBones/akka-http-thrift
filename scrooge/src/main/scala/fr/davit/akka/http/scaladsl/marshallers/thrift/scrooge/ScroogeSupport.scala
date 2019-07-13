@@ -1,19 +1,28 @@
 package fr.davit.akka.http.scaladsl.marshallers.thrift.scrooge
 
 import akka.http.scaladsl.marshalling.{Marshaller, ToEntityMarshaller}
+import akka.http.scaladsl.model.{ContentType, ContentTypeRange, MessageEntity}
 import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshaller}
 import akka.util.ByteString
 import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
 import fr.davit.akka.http.scaladsl.marshallers.thrift._
+import org.apache.thrift.protocol.TProtocolFactory
 import org.apache.thrift.transport.{TByteBuffer, TIOStreamTransport}
 
 trait ScroogeAbstractSupport extends ThriftAbstractSupport {
+
+
+  protected def serialize[T <: ThriftStruct](thrift: T)(implicit codec: ThriftStructCodec[T]): ByteString = {
+    val builder = ByteString.newBuilder
+    codec.encode(thrift, protocolFactory.getProtocol(new TIOStreamTransport(builder.asOutputStream)))
+    builder.result()
+  }
 
   //--------------------------------------------------------------------------------------------------------------------
   // Unmarshallers
   //--------------------------------------------------------------------------------------------------------------------
   implicit def scroogeUnmarshaller[T <: ThriftStruct](implicit codec: ThriftStructCodec[T]): FromEntityUnmarshaller[T] = {
-    Unmarshaller.byteStringUnmarshaller.forContentTypes(contentType).map { data =>
+    Unmarshaller.byteStringUnmarshaller.forContentTypes(contentTypes.map(ContentTypeRange.apply): _*).map { data =>
       codec.decode(protocolFactory.getProtocol(new TByteBuffer(data.asByteBuffer)))
     }
   }
@@ -23,13 +32,8 @@ trait ScroogeAbstractSupport extends ThriftAbstractSupport {
   // Marshallers
   //--------------------------------------------------------------------------------------------------------------------
   implicit def scroogeMarshaller[T <: ThriftStruct](implicit codec: ThriftStructCodec[T]): ToEntityMarshaller[T] = {
-    Marshaller.ByteStringMarshaller.wrap(contentType.mediaType) { thrift =>
-      val builder = ByteString.newBuilder
-      codec.encode(thrift, protocolFactory.getProtocol(new TIOStreamTransport(builder.asOutputStream)))
-      builder.result()
-    }
+    Marshaller.oneOf(contentTypes.map(ct => Marshaller.ByteStringMarshaller.wrap[T, MessageEntity](ct.mediaType)(serialize)): _*)
   }
-
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -56,21 +60,25 @@ object ScroogeJsonSupport extends ScroogeJsonSupport
 //----------------------------------------------------------------------------------------------------------------------
 // Generic
 //----------------------------------------------------------------------------------------------------------------------
-trait ScroogeSupport {
+trait ScroogeSupport extends ScroogeAbstractSupport {
 
-  private[scrooge] val scroogeSupports = Seq(ScroogeJsonSupport, ScroogeBinarySupport, ScroogeCompactSupport)
+  override protected def protocolFactory: TProtocolFactory = throw new Exception("No protocol factory defined for ScroogeSupport")
+
+  private val scroogeSupports = Seq(ScroogeJsonSupport, ScroogeBinarySupport, ScroogeCompactSupport)
+
+  override val contentTypes: Seq[ContentType] = scroogeSupports.flatMap(_.contentTypes)
 
   //--------------------------------------------------------------------------------------------------------------------
   // Unmarshallers
   //--------------------------------------------------------------------------------------------------------------------
-  implicit def scroogeUnmarshaller[T <: ThriftStruct](implicit codec: ThriftStructCodec[T]): FromEntityUnmarshaller[T] = {
+  implicit override def scroogeUnmarshaller[T <: ThriftStruct](implicit codec: ThriftStructCodec[T]): FromEntityUnmarshaller[T] = {
     Unmarshaller.firstOf(scroogeSupports.map(_.scroogeUnmarshaller[T]): _*)
   }
 
   //--------------------------------------------------------------------------------------------------------------------
   // Marshallers
   //--------------------------------------------------------------------------------------------------------------------
-  implicit def scroogeMarshaller[T <: ThriftStruct](implicit codec: ThriftStructCodec[T]): ToEntityMarshaller[T] = {
+  implicit override def scroogeMarshaller[T <: ThriftStruct](implicit codec: ThriftStructCodec[T]): ToEntityMarshaller[T] = {
     Marshaller.oneOf(scroogeSupports.map(_.scroogeMarshaller[T]): _*)
   }
 

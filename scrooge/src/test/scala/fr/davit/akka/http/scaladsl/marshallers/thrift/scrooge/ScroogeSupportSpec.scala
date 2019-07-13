@@ -1,14 +1,15 @@
 package fr.davit.akka.http.scaladsl.marshallers.thrift.scrooge
 
 import akka.http.scaladsl.model.headers.Accept
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, MediaTypes}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.UnacceptedResponseContentTypeRejection
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.unmarshalling.Unmarshaller.UnsupportedContentTypeException
 import akka.util.ByteString
 import com.twitter.scrooge.ThriftStructCodec
+import fr.davit.akka.http.scaladsl.marshallers.thrift.{ThriftBinarySupport, ThriftCompactSupport, ThriftJsonSupport}
+import org.apache.thrift.protocol.{TBinaryProtocol, TProtocol, TProtocolFactory}
 import org.apache.thrift.transport.TIOStreamTransport
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{FlatSpec, Matchers}
@@ -19,28 +20,49 @@ class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with S
   val scrooge                                                   = TestMessage("test", 42)
   implicit val testMessageCodec: ThriftStructCodec[TestMessage] = TestMessage
 
+  val binary  = new TBinaryProtocol.Factory()
+  val compact = new TBinaryProtocol.Factory()
+  val json    = new TBinaryProtocol.Factory()
+
+  def serialize(factory: TProtocolFactory): ByteString = {
+    val builder = ByteString.newBuilder
+    scrooge.write(factory.getProtocol(new TIOStreamTransport(builder.asOutputStream)))
+    builder.result()
+  }
+
+  val dataForContentType = ThriftBinarySupport.contentTypes.map(_ -> serialize(binary)).toMap ++
+    ThriftCompactSupport.contentTypes.map(_ -> serialize(compact)).toMap ++
+    ThriftJsonSupport.contentTypes.map(_    -> serialize(json)).toMap
+
   class ScroogeTestSuite(scroogeSupport: ScroogeAbstractSupport) {
 
     import scroogeSupport.{scroogeMarshaller, scroogeUnmarshaller}
 
-    val builder = ByteString.newBuilder
-    scrooge.write(scroogeSupport.protocolFactory.getProtocol(new TIOStreamTransport(builder.asOutputStream)))
-    val data = builder.result()
-
-    it should "marshall scrooge message" in {
+    it should "marshall scrooge message with default content type" in {
       Get() ~> get(complete(scrooge)) ~> check {
-        contentType shouldBe scroogeSupport.contentType
-        responseAs[Array[Byte]] shouldBe data
+        contentType shouldBe scroogeSupport.contentTypes.head
+        responseAs[Array[Byte]] shouldBe dataForContentType(scroogeSupport.contentTypes.head)
+      }
+    }
+
+    it should "marshall scrooge message with requested content type" in {
+      scroogeSupport.contentTypes.foreach { ct =>
+        Get().withHeaders(Accept(ct.mediaType)) ~> get(complete(scrooge)) ~> check {
+          contentType shouldBe ct
+          responseAs[Array[Byte]] shouldBe dataForContentType(ct)
+        }
       }
     }
 
     it should "unmarshall to scrooge message" in {
-      val entity = HttpEntity(scroogeSupport.contentType, data)
-      Unmarshal(entity).to[TestMessage].futureValue shouldBe scrooge
+      scroogeSupport.contentTypes.foreach { ct =>
+        val entity = HttpEntity(ct,  dataForContentType(ct))
+        Unmarshal(entity).to[TestMessage].futureValue shouldBe scrooge
+      }
     }
 
     it should "fail unmarshalling if the content type is not valid" in {
-      val entity = HttpEntity(ContentTypes.`text/plain(UTF-8)`, data)
+      val entity = HttpEntity(ContentTypes.`text/plain(UTF-8)`, "")
       Unmarshal(entity).to[TestMessage].failed.futureValue shouldBe an[UnsupportedContentTypeException]
     }
   }
@@ -48,41 +70,5 @@ class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with S
   "ScroogeBinarySupport" should behave like new ScroogeTestSuite(ScroogeBinarySupport)
   "ScroogeCompactSupport" should behave like new ScroogeTestSuite(ScroogeCompactSupport)
   "ScroogeJsonSupport" should behave like new ScroogeTestSuite(ScroogeJsonSupport)
-
-  "ScroogeSupport" should "marshall thrift message with requested type" in {
-    import ScroogeSupport._
-
-    scroogeSupports.foreach { support =>
-      val builder = ByteString.newBuilder
-      scrooge.write(support.protocolFactory.getProtocol(new TIOStreamTransport(builder.asOutputStream)))
-      val data = builder.result()
-
-      Get().withHeaders(Accept(support.contentType.mediaType)) ~> get(complete(scrooge)) ~> check {
-        contentType shouldBe support.contentType
-        responseAs[Array[Byte]] shouldBe data
-        responseAs[TestMessage] shouldBe scrooge
-      }
-    }
-  }
-
-  it should "marshall thrift message to json by default" in {
-    import ScroogeSupport._
-
-    val builder = ByteString.newBuilder
-    scrooge.write(ScroogeJsonSupport.protocolFactory.getProtocol(new TIOStreamTransport(builder.asOutputStream)))
-    val data = builder.result()
-
-    Get() ~> get(complete(scrooge)) ~> check {
-      contentType shouldBe ScroogeJsonSupport.contentType
-      responseAs[Array[Byte]] shouldBe data
-    }
-  }
-
-  it should "fail when Accept doesnt' match supported type" in {
-    import ScroogeSupport._
-
-    Get().withHeaders(Accept(MediaTypes.`text/html`)) ~> get(complete(scrooge)) ~> check {
-      rejection shouldBe a[UnacceptedResponseContentTypeRejection]
-    }
-  }
+  "ScroogeSupport" should behave like new ScroogeTestSuite(ScroogeSupport)
 }
