@@ -25,7 +25,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshaller.UnsupportedContentTypeExcep
 import akka.util.ByteString
 import com.twitter.scrooge.ThriftStructCodec
 import fr.davit.akka.http.scaladsl.marshallers.thrift.{ThriftBinarySupport, ThriftCompactSupport, ThriftJsonSupport}
-import org.apache.thrift.protocol.{TBinaryProtocol, TProtocol, TProtocolFactory}
+import org.apache.thrift.protocol.{TBinaryProtocol, TCompactProtocol, TJSONProtocol, TProtocolFactory}
 import org.apache.thrift.transport.TIOStreamTransport
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{FlatSpec, Matchers}
@@ -37,8 +37,8 @@ class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with S
   implicit val testMessageCodec: ThriftStructCodec[TestMessage] = TestMessage
 
   val binary  = new TBinaryProtocol.Factory()
-  val compact = new TBinaryProtocol.Factory()
-  val json    = new TBinaryProtocol.Factory()
+  val compact = new TCompactProtocol.Factory()
+  val json    = new TJSONProtocol.Factory()
 
   def serialize(factory: TProtocolFactory): ByteString = {
     val builder = ByteString.newBuilder
