@@ -1,19 +1,20 @@
-# akka-http-scalapb
+# akka-http-thrift
 
 [![Build Status](https://travis-ci.org/RustedBones/akka-http-thrift.svg?branch=master&style=flat)](https://travis-ci.org/RustedBones/akka-http-thrift)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/fr.davit/akka-http-thrift_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/fr.davit/akka-http-thrift_2.12)
 [![Software License](https://img.shields.io/badge/license-Apache%202-brightgreen.svg?style=flat)](LICENSE)
 
 
-akka-http protobuf and json marshalling/unmarshalling for ScalaPB messages
+akka-http thrift and json marshalling/unmarshalling for Thrift structs and Scrooge generated classes
 
 
 ## Versions
 
-| Version | Release date | Akka Http version | Thrift version | Scrooge version | Scala versions      |
-| ------- | ------------ | ----------------- | -------------- |---------------- | ------------------- |
-| `0.2.0` | 2019-07-13   | `10.1.8`          | `0.11.0`       | `19.1.0`        | `2.11.12`, `2.12.8` |
-| `0.1.0` | 2019-01-31   | `10.1.7`          | `0.11.0`       | `19.1.0`        | `2.11.12`, `2.12.8` |
+| Version | Release date | Akka Http version | Thrift version | Scrooge version | Scala versions                 |
+| ------- | ------------ | ----------------- | -------------- |---------------- | ------------------------------ |
+| `0.2.1` | 2019-12-06   | `10.1.11`         | `0.13.0`       | `19.11.0`       | `2.11.12`, `2.12.10`, `2.13.1` |
+| `0.2.0` | 2019-07-13   | `10.1.8`          | `0.11.0`       | `19.1.0`        | `2.11.12`, `2.12.8`            |
+| `0.1.0` | 2019-01-31   | `10.1.7`          | `0.11.0`       | `19.1.0`        | `2.11.12`, `2.12.8`            |
 
 The complete list can be found in the [CHANGELOG](CHANGELOG.md) file.
 
