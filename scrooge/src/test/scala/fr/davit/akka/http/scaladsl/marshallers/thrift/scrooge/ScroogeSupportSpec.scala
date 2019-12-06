@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 Michel Davit
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package fr.davit.akka.http.scaladsl.marshallers.thrift.scrooge
 
 import akka.http.scaladsl.model.headers.Accept
@@ -9,7 +25,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshaller.UnsupportedContentTypeExcep
 import akka.util.ByteString
 import com.twitter.scrooge.ThriftStructCodec
 import fr.davit.akka.http.scaladsl.marshallers.thrift.{ThriftBinarySupport, ThriftCompactSupport, ThriftJsonSupport}
-import org.apache.thrift.protocol.{TBinaryProtocol, TProtocol, TProtocolFactory}
+import org.apache.thrift.protocol.{TBinaryProtocol, TCompactProtocol, TJSONProtocol, TProtocolFactory}
 import org.apache.thrift.transport.TIOStreamTransport
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{FlatSpec, Matchers}
@@ -21,8 +37,8 @@ class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with S
   implicit val testMessageCodec: ThriftStructCodec[TestMessage] = TestMessage
 
   val binary  = new TBinaryProtocol.Factory()
-  val compact = new TBinaryProtocol.Factory()
-  val json    = new TBinaryProtocol.Factory()
+  val compact = new TCompactProtocol.Factory()
+  val json    = new TJSONProtocol.Factory()
 
   def serialize(factory: TProtocolFactory): ByteString = {
     val builder = ByteString.newBuilder
@@ -56,7 +72,7 @@ class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with S
 
     it should "unmarshall to scrooge message" in {
       scroogeSupport.contentTypes.foreach { ct =>
-        val entity = HttpEntity(ct,  dataForContentType(ct))
+        val entity = HttpEntity(ct, dataForContentType(ct))
         Unmarshal(entity).to[TestMessage].futureValue shouldBe scrooge
       }
     }
