@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+Update all dependencies
+Add scala 2.13 support
+
 ## 0.2.0 (2019-07-13)
 
 Support various media types for json format
