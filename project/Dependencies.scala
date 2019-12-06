@@ -3,12 +3,12 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val akka      = "2.5.23"
-    val akkaHttp  = "10.1.8"
+    val akka      = "2.5.26"
+    val akkaHttp  = "10.1.11"
     val logback   = "1.2.3"
-    val scalaTest = "3.0.8"
-    val thrift    = "0.12.0"
-    val scrooge   = "19.1.0"
+    val scalaTest = "3.1.0"
+    val thrift    = "0.13.0"
+    val scrooge   = "19.11.0"
   }
 
   val akkaHttp = "com.typesafe.akka" %% "akka-http"    % Versions.akkaHttp
