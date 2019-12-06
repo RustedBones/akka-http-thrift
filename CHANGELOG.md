@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.1 (2019-12-06)
+
 Update all dependencies
 Add scala 2.13 support
 
