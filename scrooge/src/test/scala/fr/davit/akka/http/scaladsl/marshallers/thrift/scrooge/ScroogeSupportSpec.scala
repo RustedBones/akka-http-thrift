@@ -72,7 +72,7 @@ class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with S
 
     it should "unmarshall to scrooge message" in {
       scroogeSupport.contentTypes.foreach { ct =>
-        val entity = HttpEntity(ct,  dataForContentType(ct))
+        val entity = HttpEntity(ct, dataForContentType(ct))
         Unmarshal(entity).to[TestMessage].futureValue shouldBe scrooge
       }
     }

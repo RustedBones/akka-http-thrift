@@ -41,7 +41,7 @@ trait ThriftAbstractSupport {
   //--------------------------------------------------------------------------------------------------------------------
   // Unmarshallers
   //--------------------------------------------------------------------------------------------------------------------
-  implicit def thriftUnmarshaller[T <: TBase[_, _] : ClassTag]: FromEntityUnmarshaller[T] = {
+  implicit def thriftUnmarshaller[T <: TBase[_, _]: ClassTag]: FromEntityUnmarshaller[T] = {
     Unmarshaller.byteStringUnmarshaller.forContentTypes(contentTypes.map(ContentTypeRange.apply): _*).map { data =>
       // this is not so nice but as long as thrift as default constructor we should be fine
       val message = implicitly[ClassTag[T]].runtimeClass.newInstance().asInstanceOf[T]
@@ -57,7 +57,6 @@ trait ThriftAbstractSupport {
     Marshaller.oneOf(contentTypes.map(ct => Marshaller.ByteStringMarshaller.wrap(ct.mediaType)(serialize)): _*)
   }
 }
-
 
 //----------------------------------------------------------------------------------------------------------------------
 // Binary
@@ -104,7 +103,8 @@ object ThriftJsonSupport extends ThriftJsonSupport
 //----------------------------------------------------------------------------------------------------------------------
 trait ThriftSupport extends ThriftAbstractSupport {
 
-  override protected def protocolFactory: TProtocolFactory = throw new Exception("No protocol factory defined for ThriftSupport")
+  override protected def protocolFactory: TProtocolFactory =
+    throw new Exception("No protocol factory defined for ThriftSupport")
 
   private val thriftSupports = Seq(ThriftJsonSupport, ThriftBinarySupport, ThriftCompactSupport)
 
@@ -113,7 +113,7 @@ trait ThriftSupport extends ThriftAbstractSupport {
   //--------------------------------------------------------------------------------------------------------------------
   // Unmarshallers
   //--------------------------------------------------------------------------------------------------------------------
-  implicit override def thriftUnmarshaller[T <: TBase[_, _] : ClassTag]: FromEntityUnmarshaller[T] = {
+  implicit override def thriftUnmarshaller[T <: TBase[_, _]: ClassTag]: FromEntityUnmarshaller[T] = {
     Unmarshaller.firstOf(thriftSupports.map(_.thriftUnmarshaller[T]): _*)
   }
 
