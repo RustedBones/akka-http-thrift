@@ -1,11 +1,11 @@
-# akka-http-scalapb
+# akka-http-thrift
 
 [![Build Status](https://travis-ci.org/RustedBones/akka-http-thrift.svg?branch=master&style=flat)](https://travis-ci.org/RustedBones/akka-http-thrift)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/fr.davit/akka-http-thrift_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/fr.davit/akka-http-thrift_2.12)
 [![Software License](https://img.shields.io/badge/license-Apache%202-brightgreen.svg?style=flat)](LICENSE)
 
 
-akka-http protobuf and json marshalling/unmarshalling for ScalaPB messages
+akka-http thrift and json marshalling/unmarshalling for Thrift structs and Scrooge generated classes
 
 
 ## Versions
