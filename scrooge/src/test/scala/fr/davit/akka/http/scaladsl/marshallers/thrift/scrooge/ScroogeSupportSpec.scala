@@ -32,7 +32,6 @@ import org.scalatest.{FlatSpec, Matchers}
 import thrift.TestMessage
 
 class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with ScalatestRouteTest {
-
   val scrooge                                                   = TestMessage("test", 42)
   implicit val testMessageCodec: ThriftStructCodec[TestMessage] = TestMessage
 
@@ -51,7 +50,6 @@ class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with S
     ThriftJsonSupport.contentTypes.map(_    -> serialize(json)).toMap
 
   class ScroogeTestSuite(scroogeSupport: ScroogeAbstractSupport) {
-
     import scroogeSupport.{scroogeMarshaller, scroogeUnmarshaller}
 
     it should "marshall scrooge message with default content type" in {
