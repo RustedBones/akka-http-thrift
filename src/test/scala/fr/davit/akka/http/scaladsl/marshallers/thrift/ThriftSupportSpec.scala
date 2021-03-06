@@ -37,7 +37,7 @@ class ThriftSupportSpec extends AnyFlatSpec with Matchers with ScalaFutures with
 
   val dataForContentType = ThriftBinarySupport.contentTypes.map(_ -> binary.serialize(thrift)).toMap ++
     ThriftCompactSupport.contentTypes.map(_ -> compact.serialize(thrift)).toMap ++
-    ThriftJsonSupport.contentTypes.map(_    -> json.serialize(thrift)).toMap
+    ThriftJsonSupport.contentTypes.map(_ -> json.serialize(thrift)).toMap
 
   class ThriftTestSuite(thriftSupport: ThriftAbstractSupport) {
     import thriftSupport.{thriftMarshaller, thriftUnmarshaller}
