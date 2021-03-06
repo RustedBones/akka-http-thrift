@@ -18,7 +18,8 @@ lazy val commonSettings = Seq(
       id = s"$username",
       name = "Michel Davit",
       email = "michel@davit.fr",
-      url = url(s"https://github.com/$username"))
+      url = url(s"https://github.com/$username")
+    )
   ),
   publishMavenStyle := true,
   Test / publishArtifact := false,
@@ -26,7 +27,7 @@ lazy val commonSettings = Seq(
   credentials ++= (for {
     username <- sys.env.get("SONATYPE_USERNAME")
     password <- sys.env.get("SONATYPE_PASSWORD")
-  } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq,
+  } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq
 )
 
 lazy val `akka-http-thrift` = (project in file("."))
