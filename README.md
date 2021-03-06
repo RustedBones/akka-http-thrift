@@ -1,6 +1,6 @@
 # akka-http-thrift
 
-[![Continuous Integration](https://github.com/RustedBones/akka-http-thrift/workflows/Continuous%20Integration/badge.svg?branch=master)](https://github.com/RustedBones/akka-http-thrift/actions?query=branch%3Amaster+workflow%3A"Continuous+Integration")
+[![Continuous Integration](https://github.com/RustedBones/akka-http-thrift/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/RustedBones/akka-http-thrift/actions/workflows/ci.yml)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/fr.davit/akka-http-thrift_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/fr.davit/akka-http-thrift_2.12)
 [![Software License](https://img.shields.io/badge/license-Apache%202-brightgreen.svg?style=flat)](LICENSE)
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
@@ -12,9 +12,10 @@ akka-http thrift and json marshalling/unmarshalling for Thrift structs and Scroo
 
 | Version | Release date | Akka Http version | Thrift version | Scrooge version | Scala versions                 |
 | ------- | ------------ | ----------------- | -------------- |---------------- | ------------------------------ |
-| `0.2.1` | 2019-12-06   | `10.1.11`         | `0.13.0`       | `19.11.0`       | `2.11.12`, `2.12.10`, `2.13.1` |
-| `0.2.0` | 2019-07-13   | `10.1.8`          | `0.11.0`       | `19.1.0`        | `2.11.12`, `2.12.8`            |
-| `0.1.0` | 2019-01-31   | `10.1.7`          | `0.11.0`       | `19.1.0`        | `2.11.12`, `2.12.8`            |
+| `0.2.2` | 2021-03-06   | `10.1.14`         | `0.14.0`       | `19.12.0`       | `2.13.5`, `2.12.13`            |
+| `0.2.1` | 2019-12-06   | `10.1.11`         | `0.13.0`       | `19.11.0`       | `2.13.1`, `2.12.10`, `2.11.12` |
+| `0.2.0` | 2019-07-13   | `10.1.8`          | `0.11.0`       | `19.1.0`        | `2.12.8`, `2.11.12`            |
+| `0.1.0` | 2019-01-31   | `10.1.7`          | `0.11.0`       | `19.1.0`        | `2.12.8`, `2.11.12`,           |
 
 The complete list can be found in the [CHANGELOG](CHANGELOG.md) file.
 
