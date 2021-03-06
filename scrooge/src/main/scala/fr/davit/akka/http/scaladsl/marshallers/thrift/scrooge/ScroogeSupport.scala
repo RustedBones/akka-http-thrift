@@ -36,8 +36,8 @@ trait ScroogeAbstractSupport extends ThriftAbstractSupport {
   //--------------------------------------------------------------------------------------------------------------------
   // Unmarshallers
   //--------------------------------------------------------------------------------------------------------------------
-  implicit def scroogeUnmarshaller[T <: ThriftStruct](
-      implicit codec: ThriftStructCodec[T]
+  implicit def scroogeUnmarshaller[T <: ThriftStruct](implicit
+      codec: ThriftStructCodec[T]
   ): FromEntityUnmarshaller[T] = {
     Unmarshaller.byteStringUnmarshaller.forContentTypes(contentTypes.map(ContentTypeRange.apply): _*).map { data =>
       codec.decode(protocolFactory.getProtocol(new TByteBuffer(data.asByteBuffer)))
@@ -90,8 +90,8 @@ trait ScroogeSupport extends ScroogeAbstractSupport {
   //--------------------------------------------------------------------------------------------------------------------
   // Unmarshallers
   //--------------------------------------------------------------------------------------------------------------------
-  implicit override def scroogeUnmarshaller[T <: ThriftStruct](
-      implicit codec: ThriftStructCodec[T]
+  implicit override def scroogeUnmarshaller[T <: ThriftStruct](implicit
+      codec: ThriftStructCodec[T]
   ): FromEntityUnmarshaller[T] = {
     Unmarshaller.firstOf(scroogeSupports.map(_.scroogeUnmarshaller[T]): _*)
   }
@@ -99,8 +99,8 @@ trait ScroogeSupport extends ScroogeAbstractSupport {
   //--------------------------------------------------------------------------------------------------------------------
   // Marshallers
   //--------------------------------------------------------------------------------------------------------------------
-  implicit override def scroogeMarshaller[T <: ThriftStruct](
-      implicit codec: ThriftStructCodec[T]
+  implicit override def scroogeMarshaller[T <: ThriftStruct](implicit
+      codec: ThriftStructCodec[T]
   ): ToEntityMarshaller[T] = {
     Marshaller.oneOf(scroogeSupports.map(_.scroogeMarshaller[T]): _*)
   }

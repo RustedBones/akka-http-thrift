@@ -12,13 +12,13 @@ object Dependencies {
   }
 
   val akkaHttp = "com.typesafe.akka" %% "akka-http"    % Versions.akkaHttp
-  val thrift   = "org.apache.thrift" % "libthrift"     % Versions.thrift
+  val thrift   = "org.apache.thrift"  % "libthrift"    % Versions.thrift
   val scrooge  = "com.twitter"       %% "scrooge-core" % Versions.scrooge exclude ("com.twitter", "libthrift")
   // "com.twitter" %% "finagle-thrift" % "6.34.0" exclude("com.twitter", "libthrift")
 
   object Provided {
-    val akkaStream = "com.typesafe.akka" %% "akka-stream"    % Versions.akka    % "provided"
-    val logback    = "ch.qos.logback"    % "logback-classic" % Versions.logback % "provided"
+    val akkaStream = "com.typesafe.akka" %% "akka-stream"     % Versions.akka    % "provided"
+    val logback    = "ch.qos.logback"     % "logback-classic" % Versions.logback % "provided"
   }
 
   object Test {
