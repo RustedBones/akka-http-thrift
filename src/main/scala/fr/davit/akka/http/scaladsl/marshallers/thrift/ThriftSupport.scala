@@ -27,7 +27,6 @@ import org.apache.thrift.transport.{TByteBuffer, TIOStreamTransport}
 import scala.reflect.ClassTag
 
 trait ThriftAbstractSupport {
-
   protected def protocolFactory: TProtocolFactory
 
   private def serialize[T <: TBase[_, _]](thrift: T): ByteString = {

@@ -6,7 +6,7 @@ lazy val commonSettings = Seq(
   organization := "fr.davit",
   organizationName := "Michel Davit",
   version := "0.2.2-SNAPSHOT",
-  crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.5"), // Don't forget keep travis in sync
+  crossScalaVersions := Seq("2.11.12", "2.12.13", "2.13.5"), // Don't forget keep travis in sync
   scalaVersion := crossScalaVersions.value.last,
   Compile / compile / scalacOptions ++= Settings.scalacOptions(scalaVersion.value),
   homepage := Some(url(s"https://github.com/$username/$repo")),
@@ -18,7 +18,8 @@ lazy val commonSettings = Seq(
       id = s"$username",
       name = "Michel Davit",
       email = "michel@davit.fr",
-      url = url(s"https://github.com/$username"))
+      url = url(s"https://github.com/$username")
+    )
   ),
   publishMavenStyle := true,
   Test / publishArtifact := false,
@@ -26,7 +27,7 @@ lazy val commonSettings = Seq(
   credentials ++= (for {
     username <- sys.env.get("SONATYPE_USERNAME")
     password <- sys.env.get("SONATYPE_PASSWORD")
-  } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq,
+  } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq
 )
 
 lazy val `akka-http-thrift` = (project in file("."))
