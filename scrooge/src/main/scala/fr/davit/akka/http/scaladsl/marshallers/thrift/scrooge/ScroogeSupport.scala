@@ -104,7 +104,6 @@ trait ScroogeSupport extends ScroogeAbstractSupport {
   ): ToEntityMarshaller[T] = {
     Marshaller.oneOf(scroogeSupports.map(_.scroogeMarshaller[T]): _*)
   }
-
 }
 
 object ScroogeSupport extends ScroogeSupport
