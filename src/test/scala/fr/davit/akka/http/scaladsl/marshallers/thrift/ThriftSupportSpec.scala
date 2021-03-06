@@ -30,7 +30,6 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{FlatSpec, Matchers}
 
 class ThriftSupportSpec extends FlatSpec with Matchers with ScalaFutures with ScalatestRouteTest {
-
   val thrift  = new TestMessage("test", 42)
   val binary  = new TSerializer(new TBinaryProtocol.Factory())
   val compact = new TSerializer(new TCompactProtocol.Factory())
@@ -41,7 +40,6 @@ class ThriftSupportSpec extends FlatSpec with Matchers with ScalaFutures with Sc
     ThriftJsonSupport.contentTypes.map(_    -> json.serialize(thrift)).toMap
 
   class ThriftTestSuite(thriftSupport: ThriftAbstractSupport) {
-
     import thriftSupport.{thriftMarshaller, thriftUnmarshaller}
 
     it should "marshall thrift message with default content type" in {
