@@ -17,9 +17,8 @@
 package fr.davit.akka.http.scaladsl.marshallers.thrift
 
 import akka.http.scaladsl.model.headers.Accept
-import akka.http.scaladsl.model.{ContentType, ContentTypes, HttpEntity, MediaTypes}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.UnacceptedResponseContentTypeRejection
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.unmarshalling.Unmarshaller.UnsupportedContentTypeException
@@ -27,9 +26,10 @@ import fr.davit.thrift.TestMessage
 import org.apache.thrift.TSerializer
 import org.apache.thrift.protocol.{TBinaryProtocol, TCompactProtocol, TJSONProtocol}
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ThriftSupportSpec extends FlatSpec with Matchers with ScalaFutures with ScalatestRouteTest {
+class ThriftSupportSpec extends AnyFlatSpec with Matchers with ScalaFutures with ScalatestRouteTest {
   val thrift  = new TestMessage("test", 42)
   val binary  = new TSerializer(new TBinaryProtocol.Factory())
   val compact = new TSerializer(new TCompactProtocol.Factory())
