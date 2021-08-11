@@ -2,15 +2,15 @@
 
 ## Unreleased
 
-- Update all dependencies
+- Update dependencies
 
 ## v0.2.2 (2021-03-06)
 
-- Update all dependencies
+- Update dependencies
 
 ## v0.2.1 (2019-12-06)
 
-- Update all dependencies
+- Update dependencies
 - Add scala 2.13 support
 
 ## v0.2.0 (2019-07-13)
