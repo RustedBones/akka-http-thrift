@@ -7,7 +7,7 @@ object Dependencies {
     val akkaHttp  = "10.2.6"
     val logback   = "1.2.5"
     val scalaTest = "3.2.8"
-    val thrift    = "0.14.2"
+    val thrift    = "0.15.0"
     val scrooge   = "21.6.0"
   }
 
