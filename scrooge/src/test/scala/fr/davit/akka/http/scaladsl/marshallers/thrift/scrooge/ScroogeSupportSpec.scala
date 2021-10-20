@@ -47,7 +47,7 @@ class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with S
 
   val dataForContentType = ThriftBinarySupport.contentTypes.map(_ -> serialize(binary)).toMap ++
     ThriftCompactSupport.contentTypes.map(_ -> serialize(compact)).toMap ++
-    ThriftJsonSupport.contentTypes.map(_    -> serialize(json)).toMap
+    ThriftJsonSupport.contentTypes.map(_ -> serialize(json)).toMap
 
   class ScroogeTestSuite(scroogeSupport: ScroogeAbstractSupport) {
     import scroogeSupport.{scroogeMarshaller, scroogeUnmarshaller}
