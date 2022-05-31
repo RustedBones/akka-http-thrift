@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## v0.2.5 (2022-06-01)
+
+- Update dependencies
+- Fix project structure
+
 ## v0.2.4 (2021-09-21)
 
 - Update dependencies
