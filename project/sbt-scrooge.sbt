@@ -1,3 +1,1 @@
-resolvers += Resolver.bintrayRepo("twittercsl", "sbt-plugins")
-
-addSbtPlugin("com.twitter" % "scrooge-sbt-plugin" % "21.12.0")
+addSbtPlugin("com.twitter" % "scrooge-sbt-plugin" % "22.4.0")

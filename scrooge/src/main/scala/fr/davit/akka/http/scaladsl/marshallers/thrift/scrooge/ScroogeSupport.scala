@@ -33,20 +33,20 @@ trait ScroogeAbstractSupport extends ThriftAbstractSupport {
     builder.result()
   }
 
-  //--------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------------------------
   // Unmarshallers
-  //--------------------------------------------------------------------------------------------------------------------
-  implicit def scroogeUnmarshaller[T <: ThriftStruct](
-      implicit codec: ThriftStructCodec[T]
+  // --------------------------------------------------------------------------------------------------------------------
+  implicit def scroogeUnmarshaller[T <: ThriftStruct](implicit
+      codec: ThriftStructCodec[T]
   ): FromEntityUnmarshaller[T] = {
     Unmarshaller.byteStringUnmarshaller.forContentTypes(contentTypes.map(ContentTypeRange.apply): _*).map { data =>
       codec.decode(protocolFactory.getProtocol(new TByteBuffer(data.asByteBuffer)))
     }
   }
 
-  //--------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------------------------
   // Marshallers
-  //--------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------------------------
   implicit def scroogeMarshaller[T <: ThriftStruct](implicit codec: ThriftStructCodec[T]): ToEntityMarshaller[T] = {
     Marshaller.oneOf(
       contentTypes.map(ct => Marshaller.ByteStringMarshaller.wrap[T, MessageEntity](ct.mediaType)(serialize)): _*
@@ -87,20 +87,20 @@ trait ScroogeSupport extends ScroogeAbstractSupport {
 
   override val contentTypes: Seq[ContentType] = scroogeSupports.flatMap(_.contentTypes)
 
-  //--------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------------------------
   // Unmarshallers
-  //--------------------------------------------------------------------------------------------------------------------
-  implicit override def scroogeUnmarshaller[T <: ThriftStruct](
-      implicit codec: ThriftStructCodec[T]
+  // --------------------------------------------------------------------------------------------------------------------
+  implicit override def scroogeUnmarshaller[T <: ThriftStruct](implicit
+      codec: ThriftStructCodec[T]
   ): FromEntityUnmarshaller[T] = {
     Unmarshaller.firstOf(scroogeSupports.map(_.scroogeUnmarshaller[T]): _*)
   }
 
-  //--------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------------------------
   // Marshallers
-  //--------------------------------------------------------------------------------------------------------------------
-  implicit override def scroogeMarshaller[T <: ThriftStruct](
-      implicit codec: ThriftStructCodec[T]
+  // --------------------------------------------------------------------------------------------------------------------
+  implicit override def scroogeMarshaller[T <: ThriftStruct](implicit
+      codec: ThriftStructCodec[T]
   ): ToEntityMarshaller[T] = {
     Marshaller.oneOf(scroogeSupports.map(_.scroogeMarshaller[T]): _*)
   }
