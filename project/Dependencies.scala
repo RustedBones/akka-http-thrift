@@ -3,18 +3,17 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val akka      = "2.6.17"
-    val akkaHttp  = "10.2.7"
-    val logback   = "1.2.6"
-    val scalaTest = "3.2.10"
+    val akka      = "2.6.19"
+    val akkaHttp  = "10.2.9"
+    val logback   = "1.2.11"
+    val scalaTest = "3.2.12"
     val thrift    = "0.16.0"
-    val scrooge   = "21.6.0"
+    val scrooge   = "22.4.0"
   }
 
   val akkaHttp = "com.typesafe.akka" %% "akka-http"    % Versions.akkaHttp
   val thrift   = "org.apache.thrift"  % "libthrift"    % Versions.thrift
-  val scrooge  = "com.twitter"       %% "scrooge-core" % Versions.scrooge exclude ("com.twitter", "libthrift")
-  // "com.twitter" %% "finagle-thrift" % "6.34.0" exclude("com.twitter", "libthrift")
+  val scrooge  = "com.twitter"       %% "scrooge-core" % Versions.scrooge
 
   object Provided {
     val akkaStream = "com.typesafe.akka" %% "akka-stream"     % Versions.akka    % "provided"

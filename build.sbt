@@ -1,16 +1,19 @@
+import _root_.io.github.davidgregory084.DevMode
+
 // General info
 val username = "RustedBones"
-val repo     = "akka-http-thrift"
+val repo = "akka-http-thrift"
 
-lazy val filterScalacOptions = { options: Seq[String] =>
-  options.filterNot { o =>
-    // get rid of value discard
-    o == "-Ywarn-value-discard" || o == "-Wvalue-discard"
-  }
+ThisBuild / tpolecatDefaultOptionsMode := DevMode
+ThisBuild / tpolecatDevModeOptions ~= { opts =>
+  opts.filterNot(Set(
+    ScalacOptions.warnValueDiscard,
+    ScalacOptions.privateWarnValueDiscard
+  ))
 }
 
 // for sbt-github-actions
-ThisBuild / crossScalaVersions := Seq("2.13.6", "2.12.15")
+ThisBuild / crossScalaVersions := Seq("2.13.8", "2.12.15")
 ThisBuild / githubWorkflowBuild := Seq(
   WorkflowStep.Sbt(name = Some("Check project"), commands = List("scalafmtCheckAll", "headerCheckAll")),
   WorkflowStep.Sbt(name = Some("Build project"), commands = List("test"))
@@ -21,10 +24,8 @@ ThisBuild / githubWorkflowPublishTargetBranches := Seq.empty
 lazy val commonSettings = Seq(
   organization := "fr.davit",
   organizationName := "Michel Davit",
-  version := "0.2.5-SNAPSHOT",
   crossScalaVersions := (ThisBuild / crossScalaVersions).value,
   scalaVersion := crossScalaVersions.value.head,
-  scalacOptions ~= filterScalacOptions,
   homepage := Some(url(s"https://github.com/$username/$repo")),
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
   startYear := Some(2019),
@@ -40,13 +41,23 @@ lazy val commonSettings = Seq(
   publishMavenStyle := true,
   Test / publishArtifact := false,
   publishTo := Some(if (isSnapshot.value) Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging),
+  releaseCrossBuild := true,
+  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   credentials ++= (for {
     username <- sys.env.get("SONATYPE_USERNAME")
     password <- sys.env.get("SONATYPE_PASSWORD")
   } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq
 )
 
-lazy val `akka-http-thrift` = (project in file("."))
+lazy val `akka-http-thrift-parent` = (project in file("."))
+  .disablePlugins(ScroogeSBT)
+  .aggregate(`akka-http-thrift`, `akka-http-thrift-scrooge`)
+  .settings(commonSettings: _*)
+  .settings(
+    publish / skip := true
+  )
+
+lazy val `akka-http-thrift` = (project in file("thrift"))
   .disablePlugins(ScroogeSBT)
   .settings(commonSettings: _*)
   .settings(

@@ -28,10 +28,11 @@ import fr.davit.akka.http.scaladsl.marshallers.thrift.{ThriftBinarySupport, Thri
 import org.apache.thrift.protocol.{TBinaryProtocol, TCompactProtocol, TJSONProtocol, TProtocolFactory}
 import org.apache.thrift.transport.TIOStreamTransport
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import thrift.TestMessage
 
-class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with ScalatestRouteTest {
+class ScroogeSupportSpec extends AnyFlatSpec with Matchers with ScalaFutures with ScalatestRouteTest {
   val scrooge                                                   = TestMessage("test", 42)
   implicit val testMessageCodec: ThriftStructCodec[TestMessage] = TestMessage
 
@@ -47,7 +48,7 @@ class ScroogeSupportSpec extends FlatSpec with Matchers with ScalaFutures with S
 
   val dataForContentType = ThriftBinarySupport.contentTypes.map(_ -> serialize(binary)).toMap ++
     ThriftCompactSupport.contentTypes.map(_ -> serialize(compact)).toMap ++
-    ThriftJsonSupport.contentTypes.map(_    -> serialize(json)).toMap
+    ThriftJsonSupport.contentTypes.map(_ -> serialize(json)).toMap
 
   class ScroogeTestSuite(scroogeSupport: ScroogeAbstractSupport) {
     import scroogeSupport.{scroogeMarshaller, scroogeUnmarshaller}
