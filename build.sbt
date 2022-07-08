@@ -2,18 +2,20 @@ import _root_.io.github.davidgregory084.DevMode
 
 // General info
 val username = "RustedBones"
-val repo = "akka-http-thrift"
+val repo     = "akka-http-thrift"
 
 ThisBuild / tpolecatDefaultOptionsMode := DevMode
 ThisBuild / tpolecatDevModeOptions ~= { opts =>
-  opts.filterNot(Set(
-    ScalacOptions.warnValueDiscard,
-    ScalacOptions.privateWarnValueDiscard
-  ))
+  opts.filterNot(
+    Set(
+      ScalacOptions.warnValueDiscard,
+      ScalacOptions.privateWarnValueDiscard
+    )
+  )
 }
 
 // for sbt-github-actions
-ThisBuild / crossScalaVersions := Seq("2.13.8", "2.12.15")
+ThisBuild / crossScalaVersions := Seq("2.13.8", "2.12.16")
 ThisBuild / githubWorkflowBuild := Seq(
   WorkflowStep.Sbt(name = Some("Check project"), commands = List("scalafmtCheckAll", "headerCheckAll")),
   WorkflowStep.Sbt(name = Some("Build project"), commands = List("test"))
