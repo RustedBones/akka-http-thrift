@@ -2,14 +2,16 @@ import _root_.io.github.davidgregory084.DevMode
 
 // General info
 val username = "RustedBones"
-val repo = "akka-http-thrift"
+val repo     = "akka-http-thrift"
 
 ThisBuild / tpolecatDefaultOptionsMode := DevMode
 ThisBuild / tpolecatDevModeOptions ~= { opts =>
-  opts.filterNot(Set(
-    ScalacOptions.warnValueDiscard,
-    ScalacOptions.privateWarnValueDiscard
-  ))
+  opts.filterNot(
+    Set(
+      ScalacOptions.warnValueDiscard,
+      ScalacOptions.privateWarnValueDiscard
+    )
+  )
 }
 
 // for sbt-github-actions
